@@ -1,10 +1,11 @@
 ---
 - hosts: all
   tasks:
-    - name: ensure ntpd is at the latest version
-      apt: pkg=ntp state=latest
-      notify:
-      - restart ntpd
-  handlers:
-    - name: restart ntpd
-      service: name=ntpd state=restarted
+    - name: install apache2
+      apt: pkg=apache2 state=latest
+      become: true
+    - name: execute a shell command
+      shell: date 
+      register: shell_result
+    - debug:
+      var: shell_result.stdout_linies
