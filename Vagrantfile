@@ -12,12 +12,31 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "hashicorp/precise64"
-  config.vm.provision :shell, path: "provisioning/bootstrap.sh"
-  config.vm.provision :ansible_local do |ansible|
-    ansible.playbook = "provisioning/playbook.yml"
+  ##config.vm.box = "hashicorp/precise64"
+  ##config.vm.provision :shell, path: "provisioning/bootstrap.sh"
+  ##config.vm.provision :ansible_local do |ansible|
+  ##  ansible.playbook = "provisioning/playbook.yml"
+  ##end
+  ##config.vm.network :forwarded_port, guest: 80, host: 4567
+  
+  config.vm.define "web" do |web|
+    web.vm.box = "hashicorp/precise64"
+	web.vm.network "private_network", ip: "10.0.0.10"
+	web.vm.provision :shell, inline: <<-SHELL
+     apt-get update
+     apt-get install -y apache2
+   SHELL
   end
-  config.vm.network :forwarded_port, guest: 80, host: 4567
+
+  config.vm.define "db" do |db|
+    db.vm.box = "hashicorp/precise64"
+	db.vm.network "private_network", ip: "10.0.0.20"
+	db.vm.provision :shell, inline: <<-SHELL
+     apt-get update
+     apt-get install -y mysql-server
+   SHELL
+  end
+    
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
