@@ -1,11 +1,21 @@
 ---
 - hosts: all
-  tasks:
-    - name: install apache2
-      apt: pkg=apache2 state=latest
-      become: true
-    - name: execute a shell command
-      shell: date 
-      register: shell_result
-    - debug:
-      var: shell_result.stdout_linies
+  become: true
+  tasks:    
+    - name: Install Packages
+      apt: update_cache=yes pkg={{item}} state=present
+      with_items:
+        - git
+        - python-pip
+        - nginx
+    - name: Clone repository
+      git: repo=https://github.com/kevinlondon/flask-hello-world.git dest=/home/vagrant/flask-hello-world
+      
+    - name: Install requirements
+      pip: requirements=/home/vagrant/flask-hello-world/requirements.txt
+    
+    - name: Copy configuration
+      template: src=/vagrant/hello-world.conf dest=/etc/init/hello-world.conf
+
+    - name: Make sure our server is running
+      service: name=hello-world state=started

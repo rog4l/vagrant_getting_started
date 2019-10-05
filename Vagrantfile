@@ -20,22 +20,27 @@ Vagrant.configure("2") do |config|
   ##config.vm.network :forwarded_port, guest: 80, host: 4567
   
   config.vm.define "web" do |web|
-    web.vm.box = "hashicorp/precise64"
-	web.vm.network "private_network", ip: "10.0.0.10"
+    web.vm.box = "ubuntu/trusty64"
+	##web.vm.network "private_network", ip: "10.0.0.10"
+	web.vm.network :forwarded_port, guest: 8000, host: 2345
 	web.vm.provision :shell, inline: <<-SHELL
      apt-get update
-     apt-get install -y apache2
+     apt-get install -y python-software-properties
    SHELL
+   web.vm.provision :ansible_local do |ansible|
+    ansible.playbook = "provisioning/playbook.yml"
+	ansible.verbose = 'v'
+  end
   end
 
-  config.vm.define "db" do |db|
-    db.vm.box = "hashicorp/precise64"
-	db.vm.network "private_network", ip: "10.0.0.20"
-	db.vm.provision :shell, inline: <<-SHELL
-     apt-get update
-     apt-get install -y mysql-server
-   SHELL
-  end
+  ##config.vm.define "db" do |db|
+  ##  db.vm.box = "hashicorp/precise64"
+  ## 	db.vm.network "private_network", ip: "10.0.0.20"
+  ##	db.vm.provision :shell, inline: <<-SHELL
+  ##   apt-get update
+  ##   apt-get install -y mysql-server
+  ## SHELL
+  ##end
     
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
