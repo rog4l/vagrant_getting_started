@@ -8,14 +8,15 @@
         - git
         - python-pip
         - nginx
-    - name: Clone repository
-      git: repo=https://github.com/kevinlondon/flask-hello-world.git dest=/home/vagrant/flask-hello-world
+      
+    - name: Copy app
+      copy: src=/vagrant/flask-hello-world/ dest=/home/vagrant/flask-hello-world
       
     - name: Install requirements
       pip: requirements=/home/vagrant/flask-hello-world/requirements.txt
     
     - name: Copy configuration
-      template: src=/vagrant/hello-world.conf dest=/etc/init/hello-world.conf
+      copy: src=/home/vagrant/flask-hello-world/hello-world.conf dest=/etc/init/hello-world.conf
 
     - name: Make sure our server is running
       service: name=hello-world state=started

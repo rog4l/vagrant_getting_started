@@ -22,11 +22,11 @@ Vagrant.configure("2") do |config|
   config.vm.define "web" do |web|
     web.vm.box = "ubuntu/trusty64"
 	##web.vm.network "private_network", ip: "10.0.0.10"
-	web.vm.network :forwarded_port, guest: 8000, host: 2345
-	web.vm.provision :shell, inline: <<-SHELL
-     apt-get update
-     apt-get install -y python-software-properties
-   SHELL
+	web.vm.network :forwarded_port, guest: 8000, host: 1112
+	##web.vm.provision :shell, inline: <<-SHELL
+    ## apt-get update
+    ## apt-get install -y python-software-properties
+   ##SHELL
    web.vm.provision :ansible_local do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
 	ansible.verbose = 'v'
